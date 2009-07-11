@@ -17,7 +17,11 @@ class Connection:
         self.con_iface = dbus.Interface(self.proxy, dbus_interface=DBUS_IFACE_SETTINGS_CONNECTION)
 
     def get_id(self):
-        return self.con_iface.GetID()
+        try:
+            s = self.get_settings()
+            return s["connection"]["id"]
+        except KeyError:
+            return self.path
 
     def get_settings(self):
         return self.con_iface.GetSettings()

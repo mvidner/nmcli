@@ -8,15 +8,15 @@ import nmip4config
 DBUS_INTERFACE_DEVICE = "org.freedesktop.NetworkManager.Device"
 
 DEVICE_STATE_UNKNOWN      = 0
-DEVICE_STATE_DOWN         = 1
-DEVICE_STATE_DISCONNECTED = 2
-DEVICE_STATE_PREPARE      = 3
-DEVICE_STATE_CONFIG       = 4
-DEVICE_STATE_NEED_AUTH    = 5
-DEVICE_STATE_IP4_CONFIG   = 6
-DEVICE_STATE_ACTIVATED    = 7
-DEVICE_STATE_FAILED       = 8
-DEVICE_STATE_CANCELLED    = 9
+DEVICE_STATE_UNMANAGED    = 1
+DEVICE_STATE_UNAVAILABLE  = 2
+DEVICE_STATE_DISCONNECTED = 3
+DEVICE_STATE_PREPARE      = 4
+DEVICE_STATE_CONFIG       = 5
+DEVICE_STATE_NEED_AUTH    = 6
+DEVICE_STATE_IP4_CONFIG   = 7
+DEVICE_STATE_ACTIVATED    = 8
+DEVICE_STATE_FAILED       = 9
 
 DEVICE_CAP_NONE           = 0
 DEVICE_CAP_SUPPORTED      = 0x01
@@ -24,8 +24,12 @@ DEVICE_CAP_CARRIER_DETECT = 0x02
 
 
 def device_state_to_str(state):
-    if state == DEVICE_STATE_DOWN:
-        return "down"
+    if state == DEVICE_STATE_UNKNOWN:
+        return "unknown"
+    if state == DEVICE_STATE_UNMANAGED:
+        return "unmanaged"
+    if state == DEVICE_STATE_UNAVAILABLE:
+        return "unavailable"
     elif state == DEVICE_STATE_DISCONNECTED:
         return "disconnected"
     elif state == DEVICE_STATE_PREPARE:
@@ -40,8 +44,6 @@ def device_state_to_str(state):
         return "activated"
     elif state == DEVICE_STATE_FAILED:
         return "failed"
-    elif state == DEVICE_STATE_CANCELLED:
-        return "cancelled"
     else:
         return "(unknown)"
 
@@ -107,8 +109,10 @@ class Device(nmobject.NMObject):
         props.append(("State", device_state_to_str(self.get_state())))
         props.append(("Udi", self.get_udi()))
         props.append(("Driver", self.get_driver()))
-        props.append(("Capabilities", device_cap_to_str (self.get_capabilities())))
-        props.append(("Carrier", nmformat.bool_to_str(self.get_carrier())))
+        caps = self.get_capabilities()
+        props.append(("Capabilities", device_cap_to_str (caps)))
+        if caps & DEVICE_CAP_CARRIER_DETECT:
+            props.append(("Carrier", nmformat.bool_to_str(self.get_carrier())))
 
         return props
 

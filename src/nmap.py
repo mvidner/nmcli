@@ -85,8 +85,8 @@ class AP(nmobject.NMObject):
     def get_mode(self):
         return self.get_property(DBUS_INTERFACE_ACCESS_POINT, "Mode")
 
-    def get_rate(self):
-        return self.get_property(DBUS_INTERFACE_ACCESS_POINT, "Rate")
+    def get_max_bitrate(self):
+        return self.get_property(DBUS_INTERFACE_ACCESS_POINT, "MaxBitrate")
 
     def get_strength(self):
         return self.get_property(DBUS_INTERFACE_ACCESS_POINT, "Strength")
@@ -109,7 +109,7 @@ class AP(nmobject.NMObject):
         props.append(("Frequency", str(self.get_frequency())))
         props.append(("HW Address", self.get_hw_address()))
         props.append(("Mode", mode_to_str(self.get_mode())))
-        props.append(("Rate", str(self.get_rate())))
+        props.append(("Max Bitrate", str(self.get_max_bitrate())))
         props.append(("Strength", str(int(self.get_strength()))))
 
         return props
