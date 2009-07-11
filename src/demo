@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# split only on newlines
+IFS='
+'
+
+C () {
+  ./nmcli "$@"
+}
+c () {
+  echo === "$@" ===
+  C "$@"
+}
+get_keys () {
+    # terse, cut first |-delimited field
+    C -t "$@" | cut -d\| -f1
+}
+
+c re
+c ne
+c we
+
+c dl
+DEVS=`get_keys dl`
+for D in $DEVS; do
+    c di $D
+    c dip $D
+done
+
+c cl
+CONS=`get_keys cl -u` # -u: ci knows user conns only
+for C in $CONS; do
+    c ci $C
+done
+
+c al
+APS=`get_keys al`
+for AP in $APS; do
+    c ai $AP
+done
+
+# UnknownMethod org.freedesktop.NetworkManager.VPN.Manager.ListConnections
+#c vl
