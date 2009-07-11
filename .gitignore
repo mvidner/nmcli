@@ -1,0 +1,6 @@
+*.pyc
+*~
+Makefile
+config.log
+config.status
+src/nmcli
